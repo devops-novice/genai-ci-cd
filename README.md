@@ -66,8 +66,6 @@ This is part of a long-term, real-world transformation journey focused on:
 - Automating DevSecOps with GenAI
 - Secure, explainable GenAI integration in BFSI
 
-Follow this journey toward AI-native leadership roles (₹1.5 Cr+ by Q3 2026) — and reuse freely.
-
 ---
 
 ## 📬 License
