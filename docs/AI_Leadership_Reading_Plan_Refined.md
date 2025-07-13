@@ -18,7 +18,7 @@ This document outlines a curated, month-by-month reading plan for building stron
 | February 2026 | *Competing in the Age of AI*                            | Marco Iansiti & Karim Lakhani     | Business transformation and platform strategy with AI         |
 | March 2026  | *Never Split the Difference*                              | Chris Voss                        | High-stakes negotiation and communication                     |
 
----
+--- 
 
 ## 📌 Notes
 
