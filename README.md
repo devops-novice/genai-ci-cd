@@ -1,7 +1,7 @@
 
 # 🤖 GenAI for CI/CD: Prompt Engineering Playground
 
-This repository contains hands-on experiments that apply **Generative AI** to **DevOps, CI/CD, and DevSecOps workflows** using the OpenAI API. It's part of a larger AI upskilling journey focused on becoming an AI-integrated Engineering Leader by March 2026.
+This repository contains hands-on experiments that apply **Generative AI** to **DevOps, CI/CD, and DevSecOps workflows** using the OpenAI API. It's part of a larger AI upskilling journey focused on becoming an AI-integrated Engineering Leader.
 
 ---
 
