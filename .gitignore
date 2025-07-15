@@ -1,7 +1,14 @@
-.venv/
+# Ignore Python cache and environment
 __pycache__/
 *.pyc
-.DS_Store
-*.log
+.venv/
 .env
+
+# Ignore logs
 logs/
+*.log
+
+# VS Code settings (optional)
+.vscode/
+.DS_Store
+
