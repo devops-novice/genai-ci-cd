@@ -40,3 +40,28 @@ async def ask_genai(query: Query):
     result = chain.invoke({"question": query.question})
     logger.info(f"Generated response: {result}")
     return {"response": result}
+
+
+from app.schemas import Analysis
+from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+from langchain.output_parsers import PydanticOutputParser
+
+class PromptRequest(BaseModel):
+    prompt: str
+
+parser = PydanticOutputParser(pydantic_object=Analysis)
+
+chat_prompt = ChatPromptTemplate.from_messages([
+    SystemMessagePromptTemplate.from_template("You are a helpful assistant that analyzes user input."),
+    HumanMessagePromptTemplate.from_template("Analyze the following text:\n{input}\n\n{format_instructions}")
+])
+
+@app.post("/structured", response_model=Analysis)
+async def analyze_prompt(data: PromptRequest):
+    messages = chat_prompt.format_messages(
+        input=data.prompt,
+        format_instructions=parser.get_format_instructions()
+    )
+    result = llm(messages)
+    parsed = parser.parse(result.content)
+    return parsed
