@@ -8,6 +8,12 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence
 
+#Build the CoT Chain
+from app.schemas import ReasoningOutput
+from langchain.output_parsers import PydanticOutputParser
+from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
+
+
 # Ensure logs folder exists
 os.makedirs("logs", exist_ok=True)
 
@@ -64,4 +70,21 @@ async def analyze_prompt(data: PromptRequest):
     )
     result = llm(messages)
     parsed = parser.parse(result.content)
+    return parsed
+
+
+cot_parser = PydanticOutputParser(pydantic_object=ReasoningOutput)
+
+cot_prompt = ChatPromptTemplate.from_messages([
+    SystemMessagePromptTemplate.from_template("You are a thoughtful assistant who explains reasoning step by step."),
+    HumanMessagePromptTemplate.from_template("Question: {question}\n\n{format_instructions}")
+])
+@app.post("/reason", response_model=ReasoningOutput)
+async def get_reasoning(data: PromptRequest):
+    messages = cot_prompt.format_messages(
+        question=data.prompt,
+        format_instructions=cot_parser.get_format_instructions()
+    )
+    result = llm(messages)
+    parsed = cot_parser.parse(result.content)
     return parsed
