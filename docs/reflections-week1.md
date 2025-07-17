@@ -43,3 +43,30 @@ _(Adjusted Day - originally July 17 content)_
 I’m seeing how these small building blocks (prompt, parse, serve) form the foundation of more powerful AI systems. It's easy to fall into copy-paste loops, but by zooming out and reflecting, I’m reinforcing the **why** behind the **how**.
 
 ---
+
+---
+
+## 📅 July 17, 2025 (shifted)
+
+### ✅ What I Did Today
+- Learned about **Chain of Thought (CoT)** prompting and how it helps LLMs reason step-by-step.
+- Documented CoT in `docs/concepts.md` with examples.
+- Built a new FastAPI endpoint `/reason` that:
+  - Accepts a user question
+  - Uses a CoT-style prompt with LangChain
+  - Returns structured output with `reasoning` and `conclusion`
+
+### 💡 What I Learned
+- CoT prompts dramatically improve logical reasoning in LLMs
+- LangChain + PydanticOutputParser make it easy to extract multiple parts of an LLM response
+- How to design explainable AI features via FastAPI
+
+### 🤔 Confusions or Follow-Ups
+- What are the best practices when CoT outputs become too verbose or uncertain?
+- Can CoT chains be combined with RAG patterns?
+
+### 🧭 Next Steps
+- Try adding multi-step CoT + follow-up generator (like: “What should I do next based on this?”)
+- Begin designing a mini RAG prototype in a few days
+
+---
