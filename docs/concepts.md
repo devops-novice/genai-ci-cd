@@ -34,3 +34,26 @@
   - Custom GPTs
   - Customer support agents
 - Enables LLMs to "know" your data without fine-tuning
+
+---
+
+## Chain of Thought (CoT) Prompting
+
+- CoT prompting encourages the LLM to reason step-by-step before giving an answer.
+- It improves accuracy, explainability, and logical flow.
+- Example:
+
+  **Prompt:**  
+  "Let’s think step by step: Why do people use sunscreen?"
+
+  **Response:**  
+  "Sunscreen blocks UV rays. UV rays can damage skin, causing sunburn and increasing cancer risk. So people use sunscreen to protect their skin."
+
+- CoT is especially helpful in:
+  - Math problems
+  - Reasoning tasks
+  - Multi-step logic or planning
+
+- CoT also forms the foundation for building multi-hop reasoning agents.
+
+---
