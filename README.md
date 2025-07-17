@@ -16,18 +16,25 @@ genai-ci-cd/
 └── README.md         # This file
 ```
 
+
 ---
 
 ## 🚀 Tasks Included
 
-### ✅ Task 1: Release Note Summarization
+### ✅ Task 1: Release Note Summarization *(Notebook)*
 Use GPT to convert raw git logs or changelogs into concise 3-line release notes for product managers.
 
-### ✅ Task 2: Legacy Script Explanation
+### ✅ Task 2: Legacy Script Explanation *(Notebook)*
 Use GPT to translate a legacy shell script into plain English for documentation or handover.
 
-### ✅ Task 3: Risk Detection from Change Requests
+### ✅ Task 3: Risk Detection from Change Requests *(Notebook)*
 Use GPT to detect missing rollback plans, testing gaps, and PROD deployment risks in change tickets.
+
+### ✅ Task 4: FastAPI Backend with LLM Chains *(Code)*
+Build real-world backend endpoints powered by structured LangChain-like logic:
+- `/ask`: Simple prompt template with string output
+- `/structured`: Chat prompt with structured JSON output (`summary`, `tone`)
+- `/reason`: Chain of Thought reasoning endpoint with step-by-step logic (`reasoning`, `conclusion`)
 
 ---
 
@@ -37,12 +44,7 @@ Use GPT to detect missing rollback plans, testing gaps, and PROD deployment risk
 ```bash
 git clone https://github.com/<your-username>/genai-ci-cd.git
 cd genai-ci-cd
-```
 
-### 2. Create `.env` or export your OpenAI key
-```bash
-export OPENAI_API_KEY="sk-XXXXXXXXXXXXXXXXXXXXXXXX"
-```
 
 ### 3. Install dependencies
 ```bash
