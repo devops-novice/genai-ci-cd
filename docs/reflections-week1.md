@@ -70,3 +70,34 @@ I’m seeing how these small building blocks (prompt, parse, serve) form the fou
 - Begin designing a mini RAG prototype in a few days
 
 ---
+
+---
+
+## 📅 July 18, 2025 (Shifted)
+
+### ✅ What I Did Today
+- Learned about **Embeddings** and how they represent semantic meaning in vector space.
+- Understood the **RAG architecture**: retrieve → inject context → generate.
+- Built a simulated `/rag-fake` FastAPI endpoint that:
+  - Stores hardcoded docs
+  - Uses keyword-matching to retrieve docs
+  - Injects retrieved text as context into the LLM
+  - Returns a context-aware answer
+
+### 💡 What I Learned
+- How LLMs can be extended to “know” external info by retrieving relevant text chunks
+- Difference between `llm()` vs `llm.invoke()` in LangChain v0.1+
+- How to use output parsers vs raw `.content` depending on goal
+- The simplicity of a manual retriever helped me understand what real RAG systems automate
+
+### 🧠 What I’d Like to Explore Next
+- How to use **real embeddings** with `text-embedding-3-small`
+- How to store and search in FAISS or Chroma
+- Best practices for splitting long documents and chunking before embedding
+
+### 🚀 Next Steps
+- Embed a real `.md` or `.py` file into a vector database
+- Replace keyword search with semantic search
+- Build `/rag-real` endpoint with live retrieval
+
+---
