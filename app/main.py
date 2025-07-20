@@ -88,3 +88,97 @@ async def get_reasoning(data: PromptRequest):
     result = llm(messages)
     parsed = cot_parser.parse(result.content)
     return parsed
+
+#July 18, 2025 Tasks
+#Step 1: Prepare Simulated Docs
+fake_documents = [
+    {"id": 1, "content": "Docker is a tool for packaging applications using containers."},
+    {"id": 2, "content": "CI/CD automates building, testing, and deploying code."},
+    {"id": 3, "content": "Monitoring tools help detect downtime and alert engineers."},
+    {"id": 4, "content": "Git is a distributed version control system."}
+]
+
+# Step 2: Write a Simple “Retriever” Function
+def retrieve_docs(user_query: str, top_k: int = 2):
+    hits = []
+    for doc in fake_documents:
+        if any(word.lower() in doc["content"].lower() for word in user_query.split()):
+            hits.append(doc["content"])
+    return hits[:top_k]
+
+# Step 3: Create a Prompt Template
+rag_prompt = PromptTemplate.from_template("""
+You are an expert assistant. Use the following context to answer the question:
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+""")
+
+rag_parser = StrOutputParser()
+
+# Step 4: Create the /rag-fake Endpoint
+@app.post("/rag-fake")
+async def rag_fake(data: PromptRequest):
+    context_docs = retrieve_docs(data.prompt)
+    context_str = "\n---\n".join(context_docs)
+
+    formatted_prompt = rag_prompt.format(
+        context=context_str,
+        question=data.prompt
+    )
+    result = llm.invoke(formatted_prompt)
+    #return {"answer": rag_parser.parse(result)}
+    return {"answer": result.content}
+
+# July 20, 2025 
+# app/main.py (append below your other endpoints)
+
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
+from langchain.prompts import PromptTemplate
+from langchain_openai import ChatOpenAI
+
+# Load the FAISS index
+vectorstore = FAISS.load_local(
+    "faiss_index",
+    OpenAIEmbeddings(),
+    allow_dangerous_deserialization=True
+)
+
+# Set up LLM and prompt
+llm_rag = ChatOpenAI(model="gpt-3.5-turbo")
+
+rag_prompt_template = PromptTemplate.from_template("""
+You are an assistant helping answer questions based on internal DevOps knowledge.
+
+Context:
+{context}
+
+Question:
+{question}
+
+Answer:
+""")
+
+@app.post("/rag-real")
+async def rag_real(data: PromptRequest):
+    # Step 1: Embed and search top 3 similar chunks
+    docs = vectorstore.similarity_search(data.prompt, k=3)
+    context = "\n---\n".join(doc.page_content for doc in docs)
+
+    # Step 2: Inject into prompt
+    formatted_prompt = rag_prompt_template.format(
+        context=context,
+        question=data.prompt
+    )
+
+    # Step 3: Generate answer
+    result = llm_rag.invoke(formatted_prompt)
+
+    return {"answer": result.content}
+

@@ -73,3 +73,10 @@ This is part of a long-term, real-world transformation journey focused on:
 ## 📬 License
 
 MIT — reuse with credit, contributions welcome.
+
+---
+
+## 📒 Full Task History
+
+For a complete week-by-week breakdown of tasks, goals, and concepts learned, see:  
+➡️ [`docs/TASKS.md`](docs/TASKS.md)

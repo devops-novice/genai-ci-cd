@@ -57,3 +57,27 @@
 - CoT also forms the foundation for building multi-hop reasoning agents.
 
 ---
+
+##July 20, 2025
+---
+
+## 🔍 Real RAG with FAISS (Concepts)
+
+**Embedding**: Converts text into a vector that captures its meaning. Similar texts → nearby vectors.
+
+**Chunking**: Long documents are broken into small sections (e.g., 200–500 tokens) to ensure relevance.
+
+**FAISS**: A fast similarity search engine that indexes vectors for quick retrieval.
+
+**RAG Flow**:
+1. Embed all text chunks
+2. Store in FAISS
+3. Embed the query
+4. Search FAISS for similar chunks
+5. Add top chunks to prompt as context
+6. LLM generates a grounded answer
+
+**Why it matters**: This is how tools like ChatGPT plugins, Claude, or custom GPTs work with your data.
+
+---
+
