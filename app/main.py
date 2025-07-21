@@ -182,3 +182,8 @@ async def rag_real(data: PromptRequest):
 
     return {"answer": result.content}
 
+
+# July 21, 2025
+# After docs = vectorstore.similarity_search(...)
+for i, doc in enumerate(docs):
+    print(f"Retrieved Chunk {i+1} from {doc.metadata.get('source')}: {doc.page_content[:100]}")
