@@ -81,3 +81,21 @@
 
 ---
 
+---
+
+## July 21
+## 📚 RAG: Scaling with Chunking & Metadata
+
+**Why Chunking?**
+- LLMs have context limits
+- Chunks enable partial document retrieval
+- Optimal size: ~200–500 tokens with overlap
+
+**Why Metadata?**
+- Add `source`, `file_name`, or `section` to each chunk
+- Enables future filtering and traceability
+- Helps with displaying sources in UI
+
+**Why Multi-file Support?**
+- Real RAG systems need to embed full folders, not just one file
+- Each file’s chunks should be tagged separately
