@@ -209,3 +209,34 @@ async def rag_with_sources(data: PromptRequest):
         "answer": result.content,
         "sources": sources
     }
+
+
+"""
+POST /rag-debug
+Internal-use endpoint for inspecting retrieved documents:
+- No LLM call
+- Returns chunks and their metadata
+"""
+@app.post("/rag-debug")
+async def rag_debug(data: PromptRequest):
+    """
+    RAG internal debug endpoint:
+    - Returns retrieved chunks and their source metadata
+    - No LLM call — for inspection only
+    """
+
+    docs = vectorstore.similarity_search(data.prompt, k=5)
+
+    debug_chunks = [
+        {
+            "source": doc.metadata.get("source", "unknown"),
+            "content": doc.page_content[:300]  # Truncate for readability
+        }
+        for doc in docs
+    ]
+
+    return {
+        "query": data.prompt,
+        "retrieved_chunks": debug_chunks
+    }
+
