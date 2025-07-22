@@ -182,8 +182,30 @@ async def rag_real(data: PromptRequest):
 
     return {"answer": result.content}
 
+"""
+POST /rag-with-sources
+Enhanced RAG endpoint that:
+- Performs FAISS-based semantic retrieval
+- Injects context into LLM prompt
+- Returns grounded answer and list of source file(s) retrieved
+"""
+@app.post("/rag-with-sources")
+async def rag_with_sources(data: PromptRequest):
+    docs = vectorstore.similarity_search(data.prompt, k=3)
 
-# July 21, 2025
-# After docs = vectorstore.similarity_search(...)
-for i, doc in enumerate(docs):
-    print(f"Retrieved Chunk {i+1} from {doc.metadata.get('source')}: {doc.page_content[:100]}")
+    # Extract content + track unique sources
+    context = "\n---\n".join(doc.page_content for doc in docs)
+    sources = list({doc.metadata.get("source", "unknown") for doc in docs})
+
+    # Build prompt
+    formatted_prompt = rag_prompt_template.format(
+        context=context,
+        question=data.prompt
+    )
+
+    result = llm_rag.invoke(formatted_prompt)
+
+    return {
+        "answer": result.content,
+        "sources": sources
+    }
