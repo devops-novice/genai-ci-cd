@@ -7,6 +7,7 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence
+from app.embedding_utils import get_retriever
 
 #Build the CoT Chain
 from app.schemas import ReasoningOutput
@@ -240,3 +241,28 @@ async def rag_debug(data: PromptRequest):
         "retrieved_chunks": debug_chunks
     }
 
+
+@app.post("/rag-via-retriever")
+async def rag_via_retriever(data: PromptRequest):
+    """
+    RAG endpoint using clean retriever abstraction.
+    Uses get_relevant_documents() instead of vectorstore.similarity_search().
+    """
+
+    retriever = get_retriever()
+    docs = retriever.get_relevant_documents(data.prompt)
+
+    context = "\n---\n".join(doc.page_content for doc in docs)
+    sources = list({doc.metadata.get("source", "unknown") for doc in docs})
+
+    formatted_prompt = rag_prompt_template.format(
+        context=context,
+        question=data.prompt
+    )
+
+    result = llm_rag.invoke(formatted_prompt)
+
+    return {
+        "answer": result.content,
+        "sources": sources
+    }
