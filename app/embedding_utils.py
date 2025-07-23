@@ -27,3 +27,19 @@ def create_and_save_faiss_index(chunks, index_dir="faiss_index"):
     vectorstore = FAISS.from_documents(chunks, embeddings)
     vectorstore.save_local(index_dir)
     print(f"✅ Saved FAISS index with {len(chunks)} chunks → {index_dir}")
+
+
+# app/embedding_utils.py
+
+from langchain_community.vectorstores import FAISS
+from langchain_openai import OpenAIEmbeddings
+
+def get_retriever(index_path="faiss_index", k=3):
+    """
+    Loads a retriever backed by FAISS.
+    You can swap this with other vector stores (e.g., Pinecone) without touching endpoint code.
+    """
+    embedding_model = OpenAIEmbeddings()
+    vectorstore = FAISS.load_local(index_path, embedding_model, allow_dangerous_deserialization=True)
+    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
+    return retriever

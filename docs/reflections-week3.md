@@ -87,3 +87,52 @@
 - Investigate use of Hybrid Retrieval (vector + keyword) for better precision
 
 ---
+
+---
+
+## 📅 July 23, 2025 — Week 3, Day 3
+
+### ✅ What I Did Today
+
+- Understood the difference between:
+  - `VectorStore` (low-level index, FAISS) and
+  - `Retriever` (high-level interface over vector search)
+- Created a `get_retriever()` utility in `embedding_utils.py`
+  - Loads FAISS index
+  - Wraps it in a retriever with customizable `k`
+- Added a new endpoint: `/rag-via-retriever`
+  - Uses retriever abstraction instead of raw FAISS
+  - Produces LLM answers + source traceability
+- Verified all retrieval, generation, and modularity behavior end-to-end
+
+---
+
+### 🧠 What I Learned
+
+- How **abstractions improve maintainability**
+- How retrievers let you **swap vector stores** without touching endpoint code
+- Why decoupling is essential for:
+  - Cleaner code
+  - Pluggable architectures (e.g. Pinecone, Chroma, hybrid retrievers)
+  - Easier unit testing (mock retrievers)
+- That even simple refactors like `get_retriever()` can unlock major flexibility
+
+---
+
+### 🔁 Design Thinking I Practiced
+
+- Inverted dependency from endpoint → utility function
+- Wrapped infra (FAISS) behind interface (Retriever)
+- Designed for reuse and future evolution (e.g., filtering, multi-index RAG)
+
+---
+
+### 🚀 What I’d Like to Explore Next
+
+- Add metadata-based filtering to retriever
+- Plug in a second retriever (e.g. keyword or BM25)
+- Create a hybrid or reranked retrieval pipeline
+- Move retrieval config to a YAML or environment file
+
+---
+
