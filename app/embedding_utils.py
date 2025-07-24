@@ -31,15 +31,31 @@ def create_and_save_faiss_index(chunks, index_dir="faiss_index"):
 
 # app/embedding_utils.py
 
+from typing import Optional, Dict
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
 
-def get_retriever(index_path="faiss_index", k=3):
+def get_retriever(index_path: str = "faiss_index", k: int = 3, filters: Optional[Dict] = None):
+
     """
-    Loads a retriever backed by FAISS.
-    You can swap this with other vector stores (e.g., Pinecone) without touching endpoint code.
+    Load a retriever backed by FAISS.
+    
+    Parameters:
+    - index_path: path to saved FAISS index
+    - k: number of documents to retrieve
+    - filters: optional metadata filter dict (e.g., {"source": "devops_notes.md"})
+    
+    Returns:
+    - Retriever object supporting get_relevant_documents()
     """
+
     embedding_model = OpenAIEmbeddings()
     vectorstore = FAISS.load_local(index_path, embedding_model, allow_dangerous_deserialization=True)
-    retriever = vectorstore.as_retriever(search_kwargs={"k": k})
+
+    search_kwargs = {"k": k}
+    if filters:
+        search_kwargs["filter"] = filters
+
+    retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
     return retriever
+

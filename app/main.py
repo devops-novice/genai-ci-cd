@@ -266,3 +266,32 @@ async def rag_via_retriever(data: PromptRequest):
         "answer": result.content,
         "sources": sources
     }
+
+
+@app.post("/rag-with-filter")
+async def rag_with_filter(data: PromptRequest):
+    """
+    RAG endpoint with optional metadata filter (e.g., source-level restriction).
+    """
+
+    # Define a static filter here (you can later make it dynamic via payload)
+    filters = {"source": "AI_Leadership_Reading_Plan_Refined.md"}  # Replace with your real file source
+
+    retriever = get_retriever(filters=filters)
+    docs = retriever.invoke(data.prompt)
+
+    context = "\n---\n".join(doc.page_content for doc in docs)
+    sources = list({doc.metadata.get("source", "unknown") for doc in docs})
+
+    formatted_prompt = rag_prompt_template.format(
+        context=context,
+        question=data.prompt
+    )
+
+    result = llm_rag.invoke(formatted_prompt)
+
+    return {
+        "answer": result.content,
+        "sources": sources,
+        "applied_filter": filters
+    }
