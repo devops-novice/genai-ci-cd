@@ -136,3 +136,47 @@
 
 ---
 
+---
+
+## 📅 July 24, 2025 — Week 3, Day 4
+
+### ✅ What I Did Today
+
+- Learned how to use **metadata filtering** in retrieval pipelines
+- Enhanced `get_retriever()` to accept an optional `filters` argument
+- Built `/rag-with-filter` endpoint to support:
+  - Controlled document retrieval
+  - Restriction by source file (e.g., only from `ci_cd_notes.txt`)
+- Validated filtered retrieval via test script and manual curl calls
+
+---
+
+### 🧠 What I Learned
+
+- RAG pipelines aren’t just about relevance — they need **scope control**
+- Filtering is essential when:
+  - Answering from trusted or current sources only
+  - Complying with regulatory traceability
+  - Avoiding hallucination from unrelated context
+- How LangChain handles filtering via:
+  - Retriever abstraction
+  - `search_kwargs={"filter": {...}}`
+
+---
+
+### 🧰 Engineering Maturity Practiced
+
+- Decoupled filtering logic from endpoint code
+- Designed for pluggability (can later pass dynamic filters from frontend)
+- Made retrieval logic extensible and auditable
+
+---
+
+### 🚀 What I’d Like to Explore Next
+
+- Make filters user-configurable via payload
+- Use multiple filters (e.g., source + topic)
+- Route queries to different retrievers based on intent
+- Add logging or metrics for filtered vs unfiltered hits
+
+---
