@@ -296,11 +296,58 @@ async def rag_with_filter(data: PromptRequest):
 
     result = llm_rag.invoke(formatted_prompt)
 
-    logger.info(f"Final RAG prompt sent to LLM:\n{formatted_prompt}")
-    logger.info(f"LLM response: {result.content[:200]}...")
+    logger.debug(f"Final RAG prompt sent to LLM:\n{formatted_prompt}")
+    logger.debug(f"LLM response: {result.content[:200]}...")
 
     return {
         "answer": result.content,
         "sources": sources,
+        "applied_filter": filters
+    }
+
+
+@app.post("/rag-verbose")
+async def rag_verbose(data: PromptRequest):
+    """
+    Returns full RAG trace: answer, chunks, prompt, sources, and applied filter.
+    Useful for debugging and internal review.
+    """
+
+    # Optional static filter — can be parameterized later
+    filters = {"source": "AI_Leadership_Reading_Plan_Refined.md"}
+
+    retriever = get_retriever(filters=filters)
+    logger.info(f"[RAG-VERBOSE] Filter used: {filters}")
+
+    docs = retriever.invoke(data.prompt)
+    logger.info(f"[RAG-VERBOSE] Retrieved {len(docs)} docs for: '{data.prompt}'")
+
+    context_chunks = []
+    sources = set()
+
+    for doc in docs:
+        chunk = doc.page_content
+        source = doc.metadata.get("source", "unknown")
+        context_chunks.append({"source": source, "content": chunk[:300]})
+        sources.add(source)
+
+    context_str = "\n---\n".join(doc["content"] for doc in context_chunks)
+
+    formatted_prompt = rag_prompt_template.format(
+        context=context_str,
+        question=data.prompt
+    )
+
+    result = llm_rag.invoke(formatted_prompt)
+
+    logger.debug(f"[RAG-VERBOSE] Prompt:\n{formatted_prompt}")
+    logger.debug(f"[RAG-VERBOSE] Answer: {result.content[:200]}...")
+
+    return {
+        "answer": result.content,
+        "question": data.prompt,
+        "formatted_prompt": formatted_prompt,
+        "retrieved_chunks": context_chunks,
+        "sources": list(sources),
         "applied_filter": filters
     }
