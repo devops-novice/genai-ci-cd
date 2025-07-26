@@ -181,3 +181,46 @@
 
 ---
 
+---
+
+## 📅 July 25, 2025 — Week 3, Day 5
+
+### ✅ What I Did Today
+
+- Studied how **tracing and logging** enable explainability in RAG systems
+- Added structured logging to key RAG endpoints (retrieval, prompt, output)
+- Designed and implemented the `/rag-verbose` endpoint:
+  - Returned full formatted prompt
+  - Included all retrieved chunks + their metadata
+  - Exposed applied filters for transparency
+- Verified logs for document trace, filters, and generation response
+
+---
+
+### 🧠 What I Learned
+
+- GenAI systems shouldn’t be black boxes — they must explain themselves
+- Observability isn't just a DevOps concept — it's **core to trustworthy AI**
+- Python’s logging module is clean, controllable, and scalable for tracing
+- A well-designed RAG endpoint should answer:
+  > “What did we ask? What did we use? What did we return? Why?”
+
+---
+
+### 🧰 Engineering Maturity Practiced
+
+- Built an introspectable endpoint, not just a functional one
+- Applied **transparent system design**: context, source, and outcome all visible
+- Created reusable logging patterns for future prompts and agents
+- Thought like a platform owner, not a prompt engineer
+
+---
+
+### 🚀 What I’d Like to Explore Next
+
+- Add `log_level` config via `.env` or CLI
+- Route logs to file or external observability system (e.g., Prometheus, Sentry)
+- Make `/rag-verbose` accept dynamic filters in payload
+- Build a minimal RAG dashboard showing logs, prompt, sources side by side
+
+---
