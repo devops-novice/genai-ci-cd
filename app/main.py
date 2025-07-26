@@ -19,16 +19,15 @@ from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTempla
 os.makedirs("logs", exist_ok=True)
 
 # Initialize logging
-log_file = f"logs/genai_log_{datetime.now().strftime('%Y-%m-%d')}.log"
+import logging
+
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s [%(levelname)s] %(message)s",
-    handlers=[
-        logging.FileHandler(log_file),
-        logging.StreamHandler()
-    ]
+    format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
+
+
 
 app = FastAPI()
 
@@ -278,7 +277,14 @@ async def rag_with_filter(data: PromptRequest):
     filters = {"source": "AI_Leadership_Reading_Plan_Refined.md"}  # Replace with your real file source
 
     retriever = get_retriever(filters=filters)
+    logger.info(f"Retriever loaded with filters: {filters}")
+
     docs = retriever.invoke(data.prompt)
+    logger.info(f"Retrieved {len(docs)} document(s) for prompt: '{data.prompt}'")
+
+    for i, doc in enumerate(docs):
+        logger.debug(f"[Doc {i+1}] Source: {doc.metadata.get('source')} — First 100 chars: {doc.page_content[:100]}")
+
 
     context = "\n---\n".join(doc.page_content for doc in docs)
     sources = list({doc.metadata.get("source", "unknown") for doc in docs})
@@ -289,6 +295,9 @@ async def rag_with_filter(data: PromptRequest):
     )
 
     result = llm_rag.invoke(formatted_prompt)
+
+    logger.info(f"Final RAG prompt sent to LLM:\n{formatted_prompt}")
+    logger.info(f"LLM response: {result.content[:200]}...")
 
     return {
         "answer": result.content,
