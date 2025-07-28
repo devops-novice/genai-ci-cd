@@ -8,6 +8,7 @@ from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence
 from app.embedding_utils import get_retriever
+from app.schemas import PromptRequest
 
 #Build the CoT Chain
 from app.schemas import ReasoningOutput
@@ -52,8 +53,8 @@ from app.schemas import Analysis
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.output_parsers import PydanticOutputParser
 
-class PromptRequest(BaseModel):
-    prompt: str
+#class PromptRequest(BaseModel):
+#    prompt: str
 
 parser = PydanticOutputParser(pydantic_object=Analysis)
 
@@ -350,4 +351,57 @@ async def rag_verbose(data: PromptRequest):
         "retrieved_chunks": context_chunks,
         "sources": list(sources),
         "applied_filter": filters
+    }
+
+
+@app.post("/rag-configurable")
+async def rag_configurable(data: PromptRequest):
+    """
+    A RAG endpoint that accepts dynamic config:
+    {
+      "prompt": "...",
+      "config": {
+        "filters": {"source": "..."},
+        "k": 3
+      }
+    }
+    """
+
+    print(f"DEBUG: PromptRequest object: {data.__dict__}")
+
+    # Extract config values with safe defaults
+    filters = data.config.get("filters") if data.config else None
+    k = data.config.get("k") if data.config and "k" in data.config else 3
+
+    retriever = get_retriever(k=k, filters=filters)
+    logger.info(f"[RAG-CONFIG] Using filters={filters}, k={k}")
+
+    docs = retriever.invoke(data.prompt)
+    context_chunks = []
+    sources = set()
+
+    for doc in docs:
+        chunk = doc.page_content
+        source = doc.metadata.get("source", "unknown")
+        context_chunks.append({"source": source, "content": chunk[:300]})
+        sources.add(source)
+
+    context_str = "\n---\n".join(doc["content"] for doc in context_chunks)
+
+    formatted_prompt = rag_prompt_template.format(
+        context=context_str,
+        question=data.prompt
+    )
+
+    result = llm_rag.invoke(formatted_prompt)
+
+    return {
+        "answer": result.content,
+        "question": data.prompt,
+        "applied_config": {
+            "filters": filters,
+            "k": k
+        },
+        "sources": list(sources),
+        "chunks_used": context_chunks
     }

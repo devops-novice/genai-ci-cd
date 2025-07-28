@@ -224,3 +224,51 @@
 - Build a minimal RAG dashboard showing logs, prompt, sources side by side
 
 ---
+
+---
+
+## 📅 July 26, 2025 — Week 3, Day 6
+
+### ✅ What I Did Today
+
+- Implemented `/rag-configurable` — a dynamic endpoint accepting filters and top-k
+- Resolved deep debugging issues around:
+  - Pydantic model override
+  - Python module import paths
+- Validated end-to-end chunk retrieval from multiple `.md` files using filters
+- Re-indexed documents and tested RAG with:
+  - Source-level scoping (`filters`)
+  - Default open retrieval (no filters)
+- Discussed how to simplify user-facing behavior in a productized API
+
+---
+
+### 🧠 What I Learned
+
+- **Configurable endpoints** allow your system to adapt to many use cases with a single interface
+- Python’s import model and execution context (`PYTHONPATH`, relative modules) deeply affect reusability
+- Pydantic models must be centralized — redefinition silently overrides logic
+- Default behavior (like open retrieval with no filters) should be **safe, explainable, and testable**
+
+---
+
+### 🧰 Engineering Maturity Practiced
+
+- Delivered a **developer-friendly** API with optional config
+- Structured system for:
+  - Reusability (retriever function)
+  - Observability (logging)
+  - Traceability (source tracking)
+  - Modularity (schemas, utils, endpoints)
+- Simulated real-world usage by adding and retrieving from multiple sources
+
+---
+
+### 🚀 What I’d Like to Explore Next
+
+- Accept multiple filters (e.g., source + tag + date)
+- Expose `temperature`, `model`, or `top-p` configs in request
+- Add a default fallback when no chunks are found (e.g., "I couldn’t find enough info in source X")
+- Visualize the whole flow with an internal RAG dashboard
+
+---
