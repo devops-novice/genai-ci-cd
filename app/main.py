@@ -15,6 +15,10 @@ from app.schemas import ReasoningOutput
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
+# Modularize RAG into a RAGEngine class
+from app.rag_engine import RAGEngine
+engine = RAGEngine()
+
 
 # Ensure logs folder exists
 os.makedirs("logs", exist_ok=True)

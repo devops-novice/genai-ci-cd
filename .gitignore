@@ -13,3 +13,6 @@ logs/
 .DS_Store
 
 logs/*.jsonl
+logs/*.log
+logs/*.jsonl
+__pycache__/
