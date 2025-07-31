@@ -12,3 +12,4 @@ logs/
 .vscode/
 .DS_Store
 
+logs/*.jsonl
