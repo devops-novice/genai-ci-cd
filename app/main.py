@@ -205,6 +205,16 @@ async def rag_with_sources(data: PromptRequest):
     )
 
     result = llm_rag.invoke(formatted_prompt)
+     
+# --- Log the query-response ---
+    from app.log_utils import log_rag_eval  # adjust import if in same file
+    log_rag_eval({
+        "query": data.prompt,
+        "answer": result.content,
+        "sources": sources,
+        "chunks": [doc.page_content for doc in docs]
+        # Optionally: add eval fields manually later
+    })
 
     return {
         "answer": result.content,
@@ -404,4 +414,53 @@ async def rag_configurable(data: PromptRequest):
         },
         "sources": list(sources),
         "chunks_used": context_chunks
+    }
+
+@app.post("/rag-with-highlights")
+async def rag_with_highlights(data: PromptRequest):
+    """
+    RAG endpoint that returns:
+    - Answer
+    - Chunks used
+    - Match highlights for each chunk
+    """
+
+    docs = vectorstore.similarity_search(data.prompt, k=3)
+
+    # Build prompt context
+    context = "\n---\n".join(doc.page_content for doc in docs)
+
+    # Run LLM
+    formatted_prompt = rag_prompt_template.format(
+        context=context,
+        question=data.prompt
+    )
+    result = llm_rag.invoke(formatted_prompt)
+
+    # Build highlighted output
+    highlighted_chunks = []
+    query_words = [w.strip().lower() for w in data.prompt.split() if len(w) > 2]  # ignore very short words
+
+    for doc in docs:
+        text = doc.page_content
+        highlights = []
+
+        for word in query_words:
+            start = text.lower().find(word)
+            if start != -1:
+                highlights.append({
+                    "term": word,
+                    "start_index": start,
+                    "end_index": start + len(word)
+                })
+
+        highlighted_chunks.append({
+            "source": doc.metadata.get("source", "unknown"),
+            "content": text,
+            "highlights": highlights
+        })
+
+    return {
+        "answer": result.content,
+        "highlighted_chunks": highlighted_chunks
     }
