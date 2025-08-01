@@ -43,3 +43,28 @@ This reflection summarizes the core engineering and conceptual progress made in 
 - Enforce `RAGResponse` schema in all endpoints
 - Write a README for this RAG project
 - Final retrospective on Week 4 progress
+
+
+🧠 Friday, August 1 – Manual Evaluation & Ground Truth Logging
+✅ What I Did
+Built eval_annotator.py to review and annotate RAG outputs manually
+
+Labeled entries for correctness and hallucination
+
+Updated rag_eval_log.jsonl with structured judgment metadata
+
+🧠 What I Learned
+Skill Practiced	What It Trains Me For
+Ground truth logging	Foundation for LLM benchmarking and real-world eval frameworks
+Human-in-the-loop annotation	Replaces guesswork with auditability and precision
+Schema-first logging discipline	Enables comparison across runs, versions, and prompt changes
+CLI-first developer tooling	Realistic internal DevEx-style RAG evaluation loop
+
+🔭 Reflection
+What gets measured, gets improved. Having was_correct and hallucinated flags changes how I view “good enough” answers.
+
+It’s tempting to eyeball responses and move on — this discipline forces me to take a QA lens, not just a dev lens.
+
+I now see how enterprise RAG systems evolve through data-driven iteration, not just prompt tweaking.
+
+⏱️ Time Spent: ~90 minutes
