@@ -1,29 +1,28 @@
-# 📚 AI Leadership Reading Plan (July 2025 – March 2026)
+# 📚 AI Leadership Reading Plan (August 2025 – March 2026)
 
-This document outlines a curated, month-by-month reading plan for building strong foundations in AI-integrated engineering leadership. The reading roadmap blends technical depth, strategic thinking, responsible governance, and communication—all essential for professionals working at the intersection of DevOps, DevSecOps, OSPO, and platform engineering.
+This document outlines a curated, month-by-month reading plan for building strong foundations in AI-integrated engineering leadership. The roadmap blends technical depth, strategic thinking, responsible governance, and cognitive clarity—all essential for professionals working at the intersection of DevOps, DevSecOps, OSPO, and platform engineering.
 
 ---
 
-## 🗖️ Monthly Book Plan (Dual Track from August Onward)
+## 🗖️ Monthly Book Plan (Three-Track from August Onward)
 
-| Month       | Primary Book (Technical/Systems)                            | Author(s)                          | Secondary Book (Leadership/Strategy)               | Author(s)                       |
-|-------------|--------------------------------------------------------------|------------------------------------|-----------------------------------------------------|----------------------------------|
-| July 2025   | *You Look Like a Thing and I Love You*                      | Janelle Shane                      | *(Only one book this month)*                        | –                                |
-| August 2025 | *Thinking in Systems*                                       | Donella Meadows                    | *The Art of Action*                                 | Stephen Bungay                   |
-| September 2025 | *Machine Learning Engineering*                           | Andriy Burkov                      | *Introducing MLOps*                                 | Mark Treveil & contributors      |
-| October 2025 | *Designing Data-Intensive Applications* (Ch. 1–6)          | Martin Kleppmann                   | *System Design Interview*                           | Alex Xu                          |
-| November 2025 | *Designing Data-Intensive Applications* (Ch. 7–end)       | Martin Kleppmann                   | *Architecting for Scale*                            | Lee Atchison                     |
-| December 2025 | *Architecting AI Solutions for Risk Governance* (PDF)     | IBM                                | *AI Superpowers*                                    | Kai-Fu Lee                       |
-| January 2026 | *Ethics of AI and Big Data*                                | Peter Kirchschlaeger               | *The Alignment Problem*                             | Brian Christian                  |
-| February 2026| *Competing in the Age of AI*                               | Iansiti & Lakhani                  | *Persuasive Writing for Leaders*                    | Harvard Business Review Editors  |
-| March 2026  | *Never Split the Difference*                               | Chris Voss                         | *Design Your Life*                                  | Burnett & Evans                  |
+| Month        | 🧠 Build Trustworthy AI Systems                        | 🏗 Design AI at Enterprise Scale                  | 🎯 Lead with Influence & Clarity               |
+|--------------|---------------------------------------------------------|--------------------------------------------------|-----------------------------------------------|
+| **August**   | *Thinking in Systems* – Donella Meadows                | *The Value Flywheel Effect* – David Anderson     | *Never Split the Difference* – Chris Voss     |
+| **September**| *Machine Learning Engineering* – Andriy Burkov         | *Competing in the Age of AI* – Iansiti & Lakhani | *Range* – David Epstein                       |
+| **October**  | *Designing Data-Intensive Apps* (Ch. 1–6) – Kleppmann  | *Software Architecture: The Hard Parts* – Ford et al. | *Systems Thinking Made Simple* – Cabrera & Cabrera |
+| **November** | *Designing Data-Intensive Apps* (Ch. 7–end) – Kleppmann| *Architecting for Scale* – Lee Atchison          | *Thinking in Bets* – Annie Duke               |
+| **December** | *Fundamentals of Deep Learning* – Nikhil Buduma        | *Ethics of AI and Big Data* – Markus Kirchschlaeger | *Superforecasting* – Philip Tetlock           |
+| **January**  | *AI Superpowers* – Kai-Fu Lee                          | *Design Your Life* – Burnett & Evans             | *Deep Work* – Cal Newport                     |
+| **February** | *Secure by Design* – Moscaritolo et al.                | *Principles* – Ray Dalio                         | *Radical Candor* – Kim Scott                  |
+| **March**    | *Trustworthy Machine Learning* – Zachary Lipton et al. | *Designing Secure Software* – Loren Kohnfelder   | *Deep Thinking* – Garry Kasparov              |
 
 ---
 
 ## 📌 Notes
 
-- Starting August 2025, two books will be read per month—one technical/systems-oriented, one leadership/strategy-oriented.
-- Each book pair is chosen to create a balanced skillset: foundational AI/ML/system design + communication, ethics, or execution.
-- Books are selected to support practical engineering work and leadership transformation in parallel.
-- Readings are designed to complement hands-on work with LangChain, MLflow, RAG, MLOps, and risk governance.
-- No proprietary or paid learning path required. Wherever possible, free resources and open publications are preferred.
+- Starting August 2025, three books will be read per month: technical mastery, enterprise-scale strategy, and cognitive leadership.
+- All books are available in **physical (paper)** format through major distributors (Amazon India, Flipkart, O'Reilly, etc.).
+- This plan supports practical engineering work and strategic leadership transformation in parallel.
+- Prioritizes deep, device-free reading experiences to reduce screen time and maximize focus.
+- Aligned with projects in RAG, LLMOps, secure software design, OSPO leadership, and platform transformation initiatives.
