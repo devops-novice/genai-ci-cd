@@ -68,3 +68,30 @@ It’s tempting to eyeball responses and move on — this discipline forces me t
 I now see how enterprise RAG systems evolve through data-driven iteration, not just prompt tweaking.
 
 ⏱️ Time Spent: ~90 minutes
+
+
+---
+
+### 📅 Saturday, August 2 – API Contracting + Documentation
+
+#### ✅ What I Did
+- Created a shared `RAGResponse` schema and enforced it across all `/rag-*` API endpoints
+- Cleaned and validated response format for FastAPI Swagger UI
+- Wrote a dedicated `README_rag_module.md` covering RAG architecture, CLI, logs, and usage
+- Committed all work to GitHub as a portfolio-ready deliverable
+
+#### 🧠 What I Learned
+
+| Practice                     | What It Trains Me For                                         |
+|------------------------------|---------------------------------------------------------------|
+| API schema enforcement       | Stability in interfaces and auditability of AI responses      |
+| Contract-first development   | Building integrations others can rely on                      |
+| Documentation discipline     | Communication clarity and open-source readiness               |
+| CLI + API dual interface     | Supporting different developer workflows without code forks   |
+
+#### 🔭 Reflection
+- Swagger UI is only as useful as the schema behind it — response_model gives it life.
+- Writing the README helped surface how modular and product-ready this system really is.
+- The CLI and API now feel equally strong — that’s intentional developer experience design.
+
+#### ⏱️ Time Spent: ~90 minutes
