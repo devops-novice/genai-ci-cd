@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional, Dict, List
 from pydantic import BaseModel
 
+
 class Analysis(BaseModel):
     summary: str
     tone: str
@@ -24,3 +25,18 @@ class RAGResponse(BaseModel):
     answer: str
     sources: List[str]
     chunks: List[str]
+
+
+class Highlight(BaseModel):
+    term: str
+    start_index: int
+    end_index: int
+
+class HighlightedChunk(BaseModel):
+    source: str
+    content: str
+    highlights: List[Highlight]
+
+class RAGWithHighlightsResponse(BaseModel):
+    answer: str
+    highlighted_chunks: List[HighlightedChunk]

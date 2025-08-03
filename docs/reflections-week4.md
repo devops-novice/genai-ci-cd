@@ -95,3 +95,35 @@ I now see how enterprise RAG systems evolve through data-driven iteration, not j
 - The CLI and API now feel equally strong — that’s intentional developer experience design.
 
 #### ⏱️ Time Spent: ~90 minutes
+
+
+---
+
+### 📅 Sunday, August 3 – Highlighted Chunks + Systems Thinking
+
+#### ✅ What I Did
+- Extended `/rag-with-highlights` to return `highlighted_chunks`
+- Added schema models for `Highlight`, `HighlightedChunk`, and `RAGWithHighlightsResponse`
+- Tested via Swagger with term match visualization support
+- Completed systems thinking reflection (Q&A)
+- Integrated insights from “Thinking in Systems” into my AI design lens
+
+#### 🧠 What I Learned
+
+| Practice                   | What It Trains Me For                                         |
+|----------------------------|---------------------------------------------------------------|
+| Span-level traceability    | Improves transparency, enables debug tooling & UI overlays    |
+| Schema modularity          | Builds structured response layering in real-world APIs        |
+| Systems thinking (Q&A)     | Reinforces mental models for stability, leverage, and design  |
+| UI-ready response shaping  | Sets foundation for explainable GenAI in enterprise apps      |
+
+#### 🔭 Reflection
+- I now see how “highlighting” chunks is more than a UI feature — it’s an **audit trail**.
+- The idea of feedback loops from systems thinking maps well to logging → annotation → retriever improvement.
+- I feel more confident designing APIs not just for myself, but for downstream users and reviewers.
+
+#### 📚 Book Progress
+- *Thinking in Systems* by Donella Meadows
+- ✅ 104/229 pages completed
+
+#### ⏱ Time Spent: ~90 mins

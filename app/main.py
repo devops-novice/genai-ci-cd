@@ -421,51 +421,40 @@ async def rag_configurable(data: PromptRequest):
         "chunks_used": context_chunks
     }
 
-@app.post("/rag-with-highlights", response_model=RAGResponse)
+from app.schemas import RAGWithHighlightsResponse, HighlightedChunk, Highlight
+
+@app.post("/rag-with-highlights", response_model=RAGWithHighlightsResponse)
 async def rag_with_highlights(data: PromptRequest):
-    """
-    RAG endpoint that returns:
-    - Answer
-    - Chunks used
-    - Match highlights for each chunk
-    """
-
     docs = vectorstore.similarity_search(data.prompt, k=3)
-
-    # Build prompt context
     context = "\n---\n".join(doc.page_content for doc in docs)
 
-    # Run LLM
-    formatted_prompt = rag_prompt_template.format(
-        context=context,
-        question=data.prompt
-    )
+    formatted_prompt = rag_prompt_template.format(context=context, question=data.prompt)
     result = llm_rag.invoke(formatted_prompt)
 
-    # Build highlighted output
+    query_terms = [w.lower() for w in data.prompt.split() if len(w) > 2]
     highlighted_chunks = []
-    query_words = [w.strip().lower() for w in data.prompt.split() if len(w) > 2]  # ignore very short words
 
     for doc in docs:
         text = doc.page_content
         highlights = []
 
-        for word in query_words:
+        for word in query_terms:
             start = text.lower().find(word)
             if start != -1:
-                highlights.append({
-                    "term": word,
-                    "start_index": start,
-                    "end_index": start + len(word)
-                })
+                highlights.append(Highlight(
+                    term=word,
+                    start_index=start,
+                    end_index=start + len(word)
+                ))
 
-        highlighted_chunks.append({
-            "source": doc.metadata.get("source", "unknown"),
-            "content": text,
-            "highlights": highlights
-        })
+        highlighted_chunks.append(HighlightedChunk(
+            source=doc.metadata.get("source", "unknown"),
+            content=text,
+            highlights=highlights
+        ))
 
-    return {
-        "answer": result.content,
-        "highlighted_chunks": highlighted_chunks
-    }
+    return RAGWithHighlightsResponse(
+        answer=result.content,
+        highlighted_chunks=highlighted_chunks
+    )
+
