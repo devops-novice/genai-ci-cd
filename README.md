@@ -80,3 +80,8 @@ MIT — reuse with credit, contributions welcome.
 
 For a complete week-by-week breakdown of tasks, goals, and concepts learned, see:  
 ➡️ [`docs/TASKS.md`](docs/TASKS.md)
+
+## 📘 Modules Included
+
+- [GenAI for CI/CD](#) – Prompting experiments and automation flows
+- [RAG System (LangChain + FastAPI + CLI)](README_rag_module.md) – Modular RAG pipeline with evaluation logging

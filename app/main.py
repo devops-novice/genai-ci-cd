@@ -9,6 +9,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence
 from app.embedding_utils import get_retriever
 from app.schemas import PromptRequest
+from app.schemas import RAGResponse
 
 #Build the CoT Chain
 from app.schemas import ReasoningOutput
@@ -127,7 +128,7 @@ Answer:
 rag_parser = StrOutputParser()
 
 # Step 4: Create the /rag-fake Endpoint
-@app.post("/rag-fake")
+@app.post("/rag-fake", response_model=RAGResponse)
 async def rag_fake(data: PromptRequest):
     context_docs = retrieve_docs(data.prompt)
     context_str = "\n---\n".join(context_docs)
@@ -170,7 +171,7 @@ Question:
 Answer:
 """)
 
-@app.post("/rag-real")
+@app.post("/rag-real", response_model=RAGResponse)
 async def rag_real(data: PromptRequest):
     # Step 1: Embed and search top 3 similar chunks
     docs = vectorstore.similarity_search(data.prompt, k=3)
@@ -194,7 +195,7 @@ Enhanced RAG endpoint that:
 - Injects context into LLM prompt
 - Returns grounded answer and list of source file(s) retrieved
 """
-@app.post("/rag-with-sources")
+@app.post("/rag-with-sources", response_model=RAGResponse)
 async def rag_with_sources(data: PromptRequest):
     docs = vectorstore.similarity_search(data.prompt, k=3)
 
@@ -232,7 +233,7 @@ Internal-use endpoint for inspecting retrieved documents:
 - No LLM call
 - Returns chunks and their metadata
 """
-@app.post("/rag-debug")
+@app.post("/rag-debug", response_model=RAGResponse)
 async def rag_debug(data: PromptRequest):
     """
     RAG internal debug endpoint:
@@ -256,7 +257,7 @@ async def rag_debug(data: PromptRequest):
     }
 
 
-@app.post("/rag-via-retriever")
+@app.post("/rag-via-retriever", response_model=RAGResponse)
 async def rag_via_retriever(data: PromptRequest):
     """
     RAG endpoint using clean retriever abstraction.
@@ -282,7 +283,7 @@ async def rag_via_retriever(data: PromptRequest):
     }
 
 
-@app.post("/rag-with-filter")
+@app.post("/rag-with-filter", response_model=RAGResponse)
 async def rag_with_filter(data: PromptRequest):
     """
     RAG endpoint with optional metadata filter (e.g., source-level restriction).
@@ -321,7 +322,7 @@ async def rag_with_filter(data: PromptRequest):
     }
 
 
-@app.post("/rag-verbose")
+@app.post("/rag-verbose", response_model=RAGResponse)
 async def rag_verbose(data: PromptRequest):
     """
     Returns full RAG trace: answer, chunks, prompt, sources, and applied filter.
@@ -368,7 +369,7 @@ async def rag_verbose(data: PromptRequest):
     }
 
 
-@app.post("/rag-configurable")
+@app.post("/rag-configurable", response_model=RAGResponse)
 async def rag_configurable(data: PromptRequest):
     """
     A RAG endpoint that accepts dynamic config:
@@ -420,7 +421,7 @@ async def rag_configurable(data: PromptRequest):
         "chunks_used": context_chunks
     }
 
-@app.post("/rag-with-highlights")
+@app.post("/rag-with-highlights", response_model=RAGResponse)
 async def rag_with_highlights(data: PromptRequest):
     """
     RAG endpoint that returns:
