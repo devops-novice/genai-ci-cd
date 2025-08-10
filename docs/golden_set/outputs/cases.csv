@@ -1,0 +1,10 @@
+id,p_at_k,r_at_k,mrr,em,f1,faith_supported,retrieved_ids
+q1,0.0,0.0,0.0,True,1.0,False,reflections-week1.md#36112|TASKS.md#11064|reflections-week3.md#15300|reflections-week1.md#23075|reflections-week1.md#30998
+q2,0.0,0.0,0.0,False,0.0,False,reflections-week1.md#36417|reflections-week0.md#7190|AI_Leadership_Reading_Plan_Refined.md#35553|reflections-week0.md#5992|AI_Leadership_Reading_Plan_Refined.md#41578
+q3,0.0,0.0,0.0,False,0.0,False,reflections-week0.md#36844|reflections-week3.md#4661|week1-plan.md#47043|reflections-week1.md#36417|week1-plan.md#36964
+q4,0.0,0.0,0.0,False,0.23255813953488372,False,AI_Leadership_Reading_Plan_Refined.md#21355|reflections-week3.md#4200|reflections-week3.md#4200|reflections-week3.md#4200|reflections-week3.md#4200
+q5,0.0,0.0,0.0,False,0.043478260869565216,False,AI_Leadership_Reading_Plan_Refined.md#51048|reflections-week3.md#4200|reflections-week3.md#4200|reflections-week3.md#4200|reflections-week3.md#4200
+q6,0.0,0.0,0.0,False,0.0,False,reflections-week0.md#36844|reflections-week3.md#6099|TASKS.md#26403|week1-plan.md#47043|concepts.md#48702
+q7,0.0,0.0,0.0,False,0.3703703703703703,False,reflections-week3.md#48006|reflections-week0.md#1924|reflections-week3.md#8911|reflections-week0.md#7190|reflections-week1.md#12658
+q8,0.0,0.0,0.0,False,0.0,False,reflections-week0.md#7190|reflections-week0.md#955|week1-plan.md#47043|week1-plan.md#55520|AI_Leadership_Reading_Plan_Refined.md#61622
+q9,0.0,0.0,0.0,False,0.0,False,reflections-week0.md#36844|week1-plan.md#47043|reflections-week3.md#40435|concepts.md#48702|reflections-week1.md#36417

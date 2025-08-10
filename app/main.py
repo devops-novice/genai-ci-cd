@@ -11,6 +11,8 @@ from app.embedding_utils import get_retriever
 from app.schemas import PromptRequest
 from app.schemas import RAGResponse
 
+from .eval_router import router as eval_router
+
 #Build the CoT Chain
 from app.schemas import ReasoningOutput
 from langchain.output_parsers import PydanticOutputParser
@@ -36,6 +38,7 @@ logger = logging.getLogger(__name__)
 
 
 app = FastAPI()
+app.include_router(eval_router)
 
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
