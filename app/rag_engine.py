@@ -6,6 +6,8 @@ from langchain.prompts import PromptTemplate
 from pydantic import BaseModel
 from app.embedding_utils import get_retriever
 
+from .guardrails import validate_input, filter_retrieved
+
 # app/rag_engine.py
 from app.retrieval import retrieve_topk     # NEW
 from app.generator import generate_answer   # NEW
@@ -53,9 +55,14 @@ from .eval_metrics import precision_at_k, recall_at_k, hit_at_k, mrr, exact_matc
 from .faithfulness import check_faithfulness
 
 def evaluate_rag(question: str, gold_answer: str, expected_source_ids: list[str], k: int = 5, run_config: dict | None = None):
+    ok, reason = validate_input(question)
+    if not ok:
+        return {"error": f"Rejected by guardrail: {reason}"}
+
     run_config = run_config or {}
     # Use your existing retrieval/generation utilities
     retrieved = retrieve_topk(question, k=k, cfg=run_config.get("retriever", {}))  # returns [{"id":..., "text":...}, ...]
+    retrieved = filter_retrieved(retrieved)  # guardrail: domain allowlist
     answer, used_ids = generate_answer(question, retrieved, cfg=run_config.get("generator", {}))
     r_ids = [r["id"] for r in retrieved]
 
