@@ -1,0 +1,10 @@
+id,p_at_k,r_at_k,mrr,em,f1,faith_supported,retrieved_ids
+q1,0.4,1.0,1.0,True,1.0,True,reflections-week1.md#chunk5|TASKS.md#chunk2|reflections-week3.md#chunk31|reflections-week4.md#chunk29|reflections-week1.md#chunk10
+q2,0.4,1.0,1.0,False,0.0,True,reflections-week1.md#chunk0|reflections-week4.md#chunk25|reflections-week0.md#chunk19|AI_Leadership_Reading_Plan_Refined.md#chunk1|reflections-week4.md#chunk0
+q3,0.4,1.0,1.0,False,0.0,True,reflections-week0.md#chunk0|reflections-week4.md#chunk0|reflections-week3.md#chunk35|week1-plan.md#chunk5|reflections-week1.md#chunk0
+q4,0.4,1.0,1.0,False,0.1951219512195122,True,reflections-week4.md#chunk25|reflections-week4.md#chunk31|AI_Leadership_Reading_Plan_Refined.md#chunk6|reflections-week4.md#chunk3|AI_Leadership_Reading_Plan_Refined.md#chunk8
+q5,0.4,1.0,1.0,False,0.060606060606060615,True,reflections-week4.md#chunk3|reflections-week3.md#chunk22|reflections-week3.md#chunk3|reflections-week3.md#chunk10|reflections-week3.md#chunk30
+q6,0.4,1.0,1.0,False,0.0,True,reflections-week0.md#chunk0|reflections-week3.md#chunk19|TASKS.md#chunk9|week1-plan.md#chunk5|concepts.md#chunk0
+q7,0.4,1.0,1.0,False,0.0,True,reflections-week4.md#chunk5|AI_Leadership_Reading_Plan_Refined.md#chunk4|reflections-week3.md#chunk39|reflections-week4.md#chunk9|reflections-week0.md#chunk20
+q8,0.4,1.0,1.0,False,0.0,True,reflections-week4.md#chunk7|reflections-week4.md#chunk14|reflections-week4.md#chunk4|reflections-week4.md#chunk13|reflections-week0.md#chunk19
+q9,0.4,1.0,1.0,False,0.0,False,reflections-week4.md#chunk0|reflections-week0.md#chunk0|week1-plan.md#chunk5|reflections-week3.md#chunk27|concepts.md#chunk0

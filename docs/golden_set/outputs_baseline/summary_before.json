@@ -1,0 +1,8 @@
+{
+  "n": 9,
+  "precision_at_k": 0.4,
+  "recall_at_k": 1.0,
+  "mrr": 1.0,
+  "f1": 0.14,
+  "faithfulness_supported_rate": 0.889
+}

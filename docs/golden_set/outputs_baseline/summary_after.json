@@ -4,5 +4,5 @@
   "recall_at_k": 0.889,
   "mrr": 1.0,
   "f1": 0.14,
-  "faithfulness_supported_rate": 1.0
+  "faithfulness_supported_rate": 0.889
 }
