@@ -12,6 +12,7 @@ from app.schemas import PromptRequest
 from app.schemas import RAGResponse
 
 from .eval_router import router as eval_router
+from .rag_router import router as rag_router   # NEW
 
 #Build the CoT Chain
 from app.schemas import ReasoningOutput
@@ -39,6 +40,7 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 app.include_router(eval_router)
+app.include_router(rag_router)                 # NEW
 
 llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0)
 
