@@ -141,3 +141,25 @@ From `docs/golden_set/outputs/summary.json`:
 ### Visual Flow
 
 ![RAG Evaluation System Flow](A_flowchart_diagram_in_a_digital_image_illustrates.png)
+
+### Aug 30 — v2 polish: selection-time cleanup + knobs + logs
+
+**What changed**
+- v2 now filters decorative Markdown at selection time (no headings/images/HRs in answers).
+- Coverage knobs exposed via run_config: `total_k`, `max_per_doc`.
+- Minimal audit log per answer: version, k, used_ids, sources, question_len, answer_len.
+
+**Why it matters**
+- Trust preserved (still extractive), usability improved (cleaner prose), traceability added (reproducible grounding).
+
+**Example (brief)**
+- Prompt: “What is RAG?”
+- v2 sources: [concepts.md, reflections-week1.md, …]
+- v2 answer: multi-sentence, citations [1]…[n], no decorative Markdown.
+
+**Leadership takeaway**
+- Balance = faithfulness (grounded) × usability (coverage/cleanliness) × observability (logs).
+- Rollout is reversible via flag; changes are tunable without code edits.
+
+**Next micro-step**
+- Expose `dedupe_similarity` in run_config **or** add a one-liner eval snapshot to `docs/eval/<date>/`.

@@ -7,6 +7,9 @@ from .guardrails import validate_input, filter_retrieved
 from app.retrieval import retrieve_topk
 from app.gen_registry import get_generator  # v1 (baseline) | v2 (multi-sentence)
 
+import os
+from app.log_utils import log_event
+
 # -----------------------------
 # Public response schema used by your API
 # -----------------------------
@@ -78,6 +81,22 @@ def rag_with_sources(
             if src not in seen_src:
                 sources.append(src)
                 seen_src.add(src)
+
+#    return RAGResponse(answer=answer, sources=sources, chunks=chunks)
+    # Minimal, audit-friendly log
+    version = ((run_config or {}).get("generator", {}) or {}).get("version") \
+              or os.getenv("GEN_VERSION") or "v1"
+    try:
+        log_event("rag.answer", {
+            "version": version,
+            "k": k,
+            "used_ids": used_ids,
+            "sources": sources,
+            "question_len": len(question),
+            "answer_len": len(answer),
+        })
+    except Exception:
+        pass  # never break the response on logging issues
 
     return RAGResponse(answer=answer, sources=sources, chunks=chunks)
 

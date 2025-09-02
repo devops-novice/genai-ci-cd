@@ -64,7 +64,9 @@ def select_supporting_sentences(
         source  = d.get("source") or d.get("file") or "local"
         score   = float(d.get("score", 1.0))
         text    = d.get("text") or ""
-        sents = split_into_sentences(text)
+#        sents = split_into_sentences(text)
+        sents = [x for x in split_into_sentences(text)
+                 if len(x) >= 20 and not looks_decorative(x)]
         scored = [(blended_sentence_score(s, query, score), s) for s in sents]
         scored.sort(key=lambda x: x[0], reverse=True)
         for sc, s in scored[:max_per_doc]:
@@ -117,3 +119,15 @@ def generate_answer(query: str, retrieved: List[Dict], total_k: int = 6, max_per
             for p in pieces
         ]
     }
+
+def looks_decorative(s: str) -> bool:
+    """Filter out markdown decoration that hurts readability but adds no facts."""
+    s = s.strip()
+    if not s: return True
+    if s.startswith(("#", "----")):   # headings / horizontal rules
+        return True
+    if s.startswith(("![", "<img")):  # images
+        return True
+    if s in {"---", "—", "–"}:        # lone rules
+        return True
+    return False
