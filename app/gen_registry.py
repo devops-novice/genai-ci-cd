@@ -12,7 +12,8 @@ def gen_v2_compat(question: str, retrieved: List[dict], cfg: dict | None = None)
     cfg = cfg or {}
     total_k = int(cfg.get("total_k", 6))
     max_per_doc = int(cfg.get("max_per_doc", 3))
-    res = gen2_core(query=question, retrieved=retrieved, total_k=total_k, max_per_doc=max_per_doc)
+    dedupe = float(cfg.get("dedupe_similarity", 0.85))
+    res = gen2_core(query=question, retrieved=retrieved, total_k=total_k, max_per_doc=max_per_doc, dedupe_similarity=dedupe)
     answer = res["answer"]
     # Convert supporting sentences → used_ids (dedup, keep order)
     ids = []

@@ -108,8 +108,8 @@ def assemble_answer(pieces: List[Dict]) -> Tuple[str, List[Dict]]:
     return ans, citations
 
 # ---- public API (same name as v1) ----
-def generate_answer(query: str, retrieved: List[Dict], total_k: int = 6, max_per_doc: int = 3, do_rewrite: bool = True):
-    pieces = select_supporting_sentences(retrieved, query, total_k=total_k, max_per_doc=max_per_doc)
+def generate_answer(query: str, retrieved: List[Dict], total_k: int = 6, max_per_doc: int = 3, do_rewrite: bool = True, dedupe_similarity: float = 0.85):
+    pieces = select_supporting_sentences(retrieved, query, total_k=total_k, max_per_doc=max_per_doc, dedupe_similarity=dedupe_similarity)
     answer, citations = assemble_answer(pieces)
     return {
         "answer": answer,

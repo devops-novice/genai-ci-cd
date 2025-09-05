@@ -1,0 +1,27 @@
+{
+  "label": "v1",
+  "macro_f1": 0.10000000000000002,
+  "rows": [
+    {
+      "id": "ex1",
+      "f1": 0.10000000000000002,
+      "exact_match": false,
+      "retrieval": {
+        "k": 5,
+        "hit_at_k": false,
+        "precision_at_k": 0.0,
+        "recall_at_k": 0.0,
+        "mrr": 0.0,
+        "retrieved_ids": [
+          "concepts.md#chunk7",
+          "reflections-week1.md#chunk18",
+          "reflections-week5.md#chunk24",
+          "reflections-week3.md#chunk40"
+        ],
+        "used_ids": [
+          "concepts.md#chunk7"
+        ]
+      }
+    }
+  ]
+}
