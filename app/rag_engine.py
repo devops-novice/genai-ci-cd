@@ -10,6 +10,11 @@ from app.gen_registry import get_generator  # v1 (baseline) | v2 (multi-sentence
 import os
 from app.log_utils import log_event
 
+class Citation(BaseModel):
+    idx: int
+    source: str
+    doc_id: str
+
 # -----------------------------
 # Public response schema used by your API
 # -----------------------------
@@ -17,7 +22,7 @@ class RAGResponse(BaseModel):
     answer: str
     sources: List[str]   # e.g., filenames/URLs of used chunks (deduped, order-preserving)
     chunks: List[str]    # the TEXT of the chunks actually used to form the answer
-
+    citations: Optional[List[Citation]] = None
 
 # -----------------------------
 # Internal pipeline runner
@@ -39,17 +44,28 @@ def _run_pipeline(
 
     run_config = run_config or {}
 
-    # 1) Retrieve and guard
-    retrieved: List[Dict] = retrieve_topk(question, k=k, cfg=run_config.get("retriever", {}))
+    # 1) Retrieve and guard (allow run_config override for k)
+    r_cfg = (run_config.get("retriever", {}) if run_config else {}) or {}
+    k_eff = int(r_cfg.get("k", k))
+    retrieved: List[Dict] = retrieve_topk(question, k=k_eff, cfg=r_cfg)
     retrieved = filter_retrieved(retrieved)  # domain/source allowlist
 
     # 2) Generate (switchable v1/v2)
     gen_cfg = (run_config.get("generator", {}) if run_config else {}) or {}
     version = gen_cfg.get("version")  # "v1" | "v2" | None
     generator = get_generator(version)  # env GEN_VERSION also supported inside registry
-    answer, used_ids = generator(question, retrieved, cfg=gen_cfg)
+    result = generator(question, retrieved, cfg=gen_cfg)
+    citations_raw: List[Dict] = []
+    # v1 returns (answer, used_ids); v2-adapter returns (answer, used_ids, citations)
+    if isinstance(result, tuple) and len(result) == 3:
+        answer, used_ids, citations_raw = result
+    else:
+        answer, used_ids = result
 
-    return answer, used_ids, retrieved
+    return answer, used_ids, retrieved, citations_raw
+
+#    answer, used_ids = generator(question, retrieved, cfg=gen_cfg)
+#    return answer, used_ids, retrieved
 
 
 # -----------------------------
@@ -63,7 +79,8 @@ def rag_with_sources(
     """
     Runs the pipeline and returns a RAGResponse that your FastAPI route can serialize.
     """
-    answer, used_ids, retrieved = _run_pipeline(question, k=k, run_config=run_config)
+#    answer, used_ids, retrieved = _run_pipeline(question, k=k, run_config=run_config)
+    answer, used_ids, retrieved, citations_raw = _run_pipeline(question, k=k, run_config=run_config)
 
     # Build sources and chunks from the retrieved items we actually used
     idset = set(used_ids)
@@ -82,14 +99,15 @@ def rag_with_sources(
                 sources.append(src)
                 seen_src.add(src)
 
-#    return RAGResponse(answer=answer, sources=sources, chunks=chunks)
     # Minimal, audit-friendly log
     version = ((run_config or {}).get("generator", {}) or {}).get("version") \
               or os.getenv("GEN_VERSION") or "v1"
+    r_cfg = ((run_config or {}).get("retriever", {}) or {})
+    k_eff = int(r_cfg.get("k", k))
     try:
         log_event("rag.answer", {
             "version": version,
-            "k": k,
+            "k": k_eff,
             "used_ids": used_ids,
             "sources": sources,
             "question_len": len(question),
@@ -98,7 +116,31 @@ def rag_with_sources(
     except Exception:
         pass  # never break the response on logging issues
 
-    return RAGResponse(answer=answer, sources=sources, chunks=chunks)
+#    return RAGResponse(answer=answer, sources=sources, chunks=chunks)
+
+    # Build structured citations. If v2 provided them, trust their order; else derive a fallback (v1).
+    citations: List[Dict] = []
+    if citations_raw:
+        for c in citations_raw:
+            citations.append({
+                "idx": int(c.get("idx")),
+                "source": c.get("source", "local"),
+                "doc_id": c.get("doc_id", ""),
+            })
+        # keep sources aligned to citation order
+        sources = [c["source"] for c in sorted(citations, key=lambda x: x["idx"])]
+    else:
+        # v1 fallback: first-seen order by source for used ids
+        seen = set()
+        idx = 1
+        for r in retrieved:
+            rid = r.get("id") or r.get("doc_id")
+            src = r.get("source") or r.get("file") or "local"
+            if rid in idset and src not in seen:
+                citations.append({"idx": idx, "source": src, "doc_id": rid})
+                seen.add(src); idx += 1
+
+    return RAGResponse(answer=answer, sources=sources, chunks=chunks, citations=citations)
 
 
 # -----------------------------
@@ -118,7 +160,8 @@ def evaluate_rag(
     Runs retrieval + generation, then computes retrieval/generation/faithfulness metrics.
     Returns a dict suitable for logs or an eval endpoint.
     """
-    answer, used_ids, retrieved = _run_pipeline(question, k=k, run_config=run_config)
+#    answer, used_ids, retrieved = _run_pipeline(question, k=k, run_config=run_config)
+    answer, used_ids, retrieved, _ = _run_pipeline(question, k=k, run_config=run_config)
 
     r_ids = [r.get("id") or r.get("doc_id") for r in retrieved]
 

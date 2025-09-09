@@ -2,7 +2,6 @@
 
 from pydantic import BaseModel
 from typing import Optional, Dict, List
-from pydantic import BaseModel
 
 
 class Analysis(BaseModel):
@@ -20,11 +19,17 @@ class PromptRequest(BaseModel):
     prompt: str
     config: Optional[Dict] = None  # ✅ e.g., {"filters": {"source": "AI_Leadership_Reading_Plan_Refined.md"}, "k": 5}
 
+# define Citation **before** RAGResponse
+class Citation(BaseModel):
+    idx: int
+    source: str
+    doc_id: str
 
 class RAGResponse(BaseModel):
     answer: str
     sources: List[str]
     chunks: List[str]
+    citations: Optional[List[Citation]] = None
 
 
 class Highlight(BaseModel):

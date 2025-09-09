@@ -8,7 +8,7 @@ from app.generator import generate_answer as gen_v1
 # v2 core: returns dict; we'll adapt it
 from app.generator_v2_multi import generate_answer as gen2_core
 
-def gen_v2_compat(question: str, retrieved: List[dict], cfg: dict | None = None) -> Tuple[str, List[str]]:
+def gen_v2_compat(question: str, retrieved: List[dict], cfg: dict | None = None) -> Tuple[str, List[str], List[dict]]:
     cfg = cfg or {}
     total_k = int(cfg.get("total_k", 6))
     max_per_doc = int(cfg.get("max_per_doc", 3))
@@ -21,7 +21,7 @@ def gen_v2_compat(question: str, retrieved: List[dict], cfg: dict | None = None)
         did = s.get("doc_id")
         if did and did not in ids:
             ids.append(did)
-    return answer, ids
+    return answer, ids, res.get("citations", [])
 
 _REGISTRY: Dict[str, Callable] = {
     "v1": gen_v1,          # unchanged
