@@ -16,3 +16,5 @@ logs/*.jsonl
 logs/*.log
 logs/*.jsonl
 __pycache__/
+docs/eval/**/*.json
+
