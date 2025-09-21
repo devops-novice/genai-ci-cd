@@ -131,14 +131,20 @@ rag_parser = StrOutputParser()
 @app.post("/rag-fake", response_model=RAGResponse)
 async def rag_fake(data: PromptRequest):
     context_docs = retrieve_docs(data.prompt)
-    context_str = "\n---\n".join(context_docs)
+    chunks = to_chunks(context_docs)                         # normalize to objects
+    sources = to_sources(chunks)                             # list[str]
+    context_str = "\n---\n".join(c["content"] for c in chunks)
 
     formatted_prompt = rag_prompt.format(
         context=context_str,
         question=data.prompt
     )
     result = llm.invoke(formatted_prompt)
-    return {"answer": result.content}
+    return {
+        "answer": result.content or "",
+        "sources": sources,
+        "chunks": [c["content"] for c in chunks]             # RAGResponse expects List[str]
+    }
 
 # July 20, 2025 
 # app/main.py (append below your other endpoints)
@@ -173,8 +179,10 @@ Answer:
 @app.post("/rag-real", response_model=RAGResponse)
 async def rag_real(data: PromptRequest):
     # Step 1: Embed and search top 3 similar chunks
-    docs = vectorstore.similarity_search(data.prompt, k=3)
-    context = "\n---\n".join(doc.page_content for doc in docs)
+    docs = vectorstore.similarity_search(data.prompt, k=3) or []
+    chunks = to_chunks(docs)
+    sources = to_sources(chunks)
+    context = "\n---\n".join(c["content"] for c in chunks)
 
     # Step 2: Inject into prompt
     formatted_prompt = rag_prompt_template.format(
@@ -185,7 +193,12 @@ async def rag_real(data: PromptRequest):
     # Step 3: Generate answer
     result = llm_rag.invoke(formatted_prompt)
 
-    return {"answer": result.content}
+    return {
+        "answer": result.content or "",
+        "sources": sources,
+        "chunks": [c["content"] for c in chunks]
+    }
+
 
 """
 POST /rag-with-sources
@@ -288,22 +301,20 @@ async def rag_with_filter(data: PromptRequest):
     """
     RAG endpoint with optional metadata filter (e.g., source-level restriction).
     """
-
-    # Define a static filter here (you can later make it dynamic via payload)
-    filters = {"source": "AI_Leadership_Reading_Plan_Refined.md"}  # Replace with your real file source
+    filters = {"source": "AI_Leadership_Reading_Plan_Refined.md"}
 
     retriever = get_retriever(filters=filters)
     logger.info(f"Retriever loaded with filters: {filters}")
 
-    docs = retriever.invoke(data.prompt)
+    docs = retriever.invoke(data.prompt) or []
     logger.info(f"Retrieved {len(docs)} document(s) for prompt: '{data.prompt}'")
 
     for i, doc in enumerate(docs):
         logger.debug(f"[Doc {i+1}] Source: {doc.metadata.get('source')} — First 100 chars: {doc.page_content[:100]}")
 
-
-    context = "\n---\n".join(doc.page_content for doc in docs)
-    sources = list({doc.metadata.get("source", "unknown") for doc in docs})
+    chunks = to_chunks(docs)
+    sources = to_sources(chunks)
+    context = "\n---\n".join(c["content"] for c in chunks)
 
     formatted_prompt = rag_prompt_template.format(
         context=context,
@@ -315,11 +326,11 @@ async def rag_with_filter(data: PromptRequest):
     logger.debug(f"Final RAG prompt sent to LLM:\n{formatted_prompt}")
     logger.debug(f"LLM response: {result.content[:200]}...")
 
-    docs_chunks = to_chunks(docs)
     return {
-        "answer": result.content,
+        "answer": result.content or "",
         "sources": sources,
-        "applied_filter": filters
+        "chunks": [c["content"] for c in chunks]
+        # If/when you extend schema: "meta": {"applied_filter": filters}
     }
 
 
