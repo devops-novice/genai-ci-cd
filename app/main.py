@@ -20,6 +20,10 @@ from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 from app.utils.response import to_chunks, to_sources
+from fastapi import APIRouter, Body, HTTPException
+
+# if this is in rag_router.py:
+router = APIRouter()
 
 # Modularize RAG into a RAGEngine class
 from app.rag_engine import RAGEngine
