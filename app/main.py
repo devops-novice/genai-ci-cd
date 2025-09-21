@@ -239,33 +239,29 @@ async def rag_with_sources(data: PromptRequest):
     }
 
 
-"""
-POST /rag-debug
-Internal-use endpoint for inspecting retrieved documents:
-- No LLM call
-- Returns chunks and their metadata
-"""
-@app.post("/rag-debug", response_model=RAGResponse)
-async def rag_debug(data: PromptRequest):
-    """
-    RAG internal debug endpoint:
-    - Returns retrieved chunks and their source metadata
-    - No LLM call — for inspection only
-    """
+@router.post("/rag-debug", response_model=RAGResponse)
+def rag_debug_route(payload: dict = Body(...)):
+    prompt = payload.get("prompt") or payload.get("query")
+    if not prompt:
+        raise HTTPException(status_code=422, detail="Field 'prompt' is required")
 
-    docs = vectorstore.similarity_search(data.prompt, k=5)
+    # 1) Retrieve docs
+    docs = retrieve_docs(prompt) or []
 
-    debug_chunks = [
-        {
-            "source": doc.metadata.get("source", "unknown"),
-            "content": doc.page_content[:300]  # Truncate for readability
-        }
-        for doc in docs
-    ]
+    # 2) Normalize to chunk objects and derive sources
+    chunk_objs = to_chunks(docs)
+    sources = to_sources(chunk_objs)
 
+    # 3) Build context and generate
+    context = "\n---\n".join(c["content"] for c in chunk_objs)
+    formatted = rag_prompt_template.format(context=context, question=prompt)
+    result = llm_rag.invoke(formatted)
+
+    # 4) Return shape that RAGResponse expects
     return {
-        "query": data.prompt,
-        "chunks": to_chunks(debug_chunks)
+        "answer": (result.content or ""),
+        "sources": sources,
+        "chunks": [c["content"] for c in chunk_objs]
     }
 
 
