@@ -243,7 +243,7 @@ async def rag_with_sources(data: PromptRequest):
     }
 
 
-@router.post("/rag-debug", response_model=RAGResponse)
+@app.post("/rag-debug", response_model=RAGResponse)
 def rag_debug_route(payload: dict = Body(...)):
     prompt = payload.get("prompt") or payload.get("query")
     if not prompt:
