@@ -339,35 +339,37 @@ async def rag_verbose(data: PromptRequest):
     docs = retriever.invoke(data.prompt)
     logger.info(f"[RAG-VERBOSE] Retrieved {len(docs)} docs for: '{data.prompt}'")
 
-    context_chunks = []
-    sources = set()
+    # 1) Coerce docs to normalized chunk objects
+    chunks = to_chunks(docs)                        # [{"source":..., "content":..., ...}, ...]
+    sources = to_sources(chunks)                    # ["file1.md", "file2.md", ...]
 
-    for doc in docs:
-        chunk = doc.page_content
-        source = doc.metadata.get("source", "unknown")
-        context_chunks.append({"source": source, "content": chunk[:300]})
-        sources.add(source)
-
-    context_str = "\n---\n".join(doc["content"] for doc in context_chunks)
+    # 2) Build a readable context string (use full content or trimmed preview)
+    context_str = "\n---\n".join(c["content"] for c in chunks)
 
     formatted_prompt = rag_prompt_template.format(
-        context=context_str,
-        question=data.prompt
+    context=context_str,
+    question=data.prompt
     )
 
     result = llm_rag.invoke(formatted_prompt)
 
-    logger.debug(f"[RAG-VERBOSE] Prompt:\n{formatted_prompt}")
-    logger.debug(f"[RAG-VERBOSE] Answer: {result.content[:200]}...")
-
+    # 3) Uniform response (answer + sources + chunks). Extra fields go into meta.
     return {
-        "answer": result.content,
-        "question": data.prompt,
-        "formatted_prompt": formatted_prompt,
-        "retrieved_chunks": context_chunks,
-        "sources": list(sources),
-        "applied_filter": filters
+        "answer": (result.content or ""),
+        "sources": sources,
+        "chunks": chunks,
+        "meta": {
+            "question": data.prompt,
+            "formatted_prompt": formatted_prompt,
+            "applied_filter": filters,
+            # Optional: keep a short preview for UI/debug
+            "context_preview": [
+                {"source": c.get("source", ""), "content": (c.get("content", "")[:300])}
+                for c in chunks
+            ]
+        }
     }
+
 
 
 @app.post("/rag-configurable", response_model=RAGResponse)
