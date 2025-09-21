@@ -1,7 +1,7 @@
 # app/schemas.py
 
 from pydantic import BaseModel
-from typing import Optional, Dict, List
+from typing import Optional, Dict, List, Any
 
 
 class Analysis(BaseModel):
@@ -45,3 +45,21 @@ class HighlightedChunk(BaseModel):
 class RAGWithHighlightsResponse(BaseModel):
     answer: str
     highlighted_chunks: List[HighlightedChunk]
+
+class RetrievedChunk(BaseModel):
+    id: Optional[str] = None
+    source: str
+    content: str
+    score: Optional[float] = None
+    start: Optional[int] = None
+    end: Optional[int] = None
+
+class DebugResponse(BaseModel):
+    query: str
+    answer: str
+    sources: List[str]
+    chunks: List[RetrievedChunk]
+    meta: Optional[Dict[str, Any]] = None
+
+class Query(BaseModel):
+    prompt: str  # keep 'prompt' as the canonical input

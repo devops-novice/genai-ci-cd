@@ -19,6 +19,8 @@ from app.schemas import ReasoningOutput
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
+from app.utils.response import to_chunks, to_sources
+
 # Modularize RAG into a RAGEngine class
 from app.rag_engine import RAGEngine
 engine = RAGEngine()
@@ -35,8 +37,6 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(message)s"
 )
 logger = logging.getLogger(__name__)
-
-
 
 app = FastAPI()
 app.include_router(eval_router)
@@ -62,9 +62,6 @@ async def ask_genai(query: Query):
 from app.schemas import Analysis
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 from langchain.output_parsers import PydanticOutputParser
-
-#class PromptRequest(BaseModel):
-#    prompt: str
 
 parser = PydanticOutputParser(pydantic_object=Analysis)
 
@@ -100,8 +97,6 @@ async def get_reasoning(data: PromptRequest):
     parsed = cot_parser.parse(result.content)
     return parsed
 
-#July 18, 2025 Tasks
-#Step 1: Prepare Simulated Docs
 fake_documents = [
     {"id": 1, "content": "Docker is a tool for packaging applications using containers."},
     {"id": 2, "content": "CI/CD automates building, testing, and deploying code."},
@@ -143,7 +138,6 @@ async def rag_fake(data: PromptRequest):
         question=data.prompt
     )
     result = llm.invoke(formatted_prompt)
-    #return {"answer": rag_parser.parse(result)}
     return {"answer": result.content}
 
 # July 20, 2025 
@@ -215,20 +209,20 @@ async def rag_with_sources(data: PromptRequest):
     )
 
     result = llm_rag.invoke(formatted_prompt)
-     
+
 # --- Log the query-response ---
     from app.log_utils import log_rag_eval  # adjust import if in same file
     log_rag_eval({
         "query": data.prompt,
         "answer": result.content,
         "sources": sources,
-        "chunks": [doc.page_content for doc in docs]
-        # Optionally: add eval fields manually later
+        "chunks": to_chunks(docs)
     })
-
+    docs_chunks = to_chunks(docs)
     return {
         "answer": result.content,
-        "sources": sources
+        "sources": sources,
+        "chunks": docs_chunks
     }
 
 
@@ -258,7 +252,7 @@ async def rag_debug(data: PromptRequest):
 
     return {
         "query": data.prompt,
-        "retrieved_chunks": debug_chunks
+        "chunks": to_chunks(debug_chunks)
     }
 
 
@@ -281,10 +275,11 @@ async def rag_via_retriever(data: PromptRequest):
     )
 
     result = llm_rag.invoke(formatted_prompt)
-
+    docs_chunks = to_chunks(docs)
     return {
         "answer": result.content,
-        "sources": sources
+        "sources": sources,
+        "chunks": docs_chunks
     }
 
 
@@ -320,6 +315,7 @@ async def rag_with_filter(data: PromptRequest):
     logger.debug(f"Final RAG prompt sent to LLM:\n{formatted_prompt}")
     logger.debug(f"LLM response: {result.content[:200]}...")
 
+    docs_chunks = to_chunks(docs)
     return {
         "answer": result.content,
         "sources": sources,
