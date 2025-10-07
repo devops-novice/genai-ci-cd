@@ -11,3 +11,6 @@ def rag_with_sources_route(payload: dict = Body(...), gen: str | None = Query(No
         raise HTTPException(status_code=422, detail="Field 'prompt' is required")
     run_cfg = {"generator": {"version": gen}} if gen else {}
     return rag_with_sources(prompt, k=5, run_config=run_cfg)
+
+def route_all_docs(per_doc_results: dict[str, list[tuple[float,dict]]]):
+    return per_doc_results  # brute force for now; plug metadata/LLM router later

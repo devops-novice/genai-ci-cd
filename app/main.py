@@ -7,20 +7,24 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnableSequence
-from app.embedding_utils import get_retriever
-from app.schemas import PromptRequest
-from app.schemas import RAGResponse
 
 from .eval_router import router as eval_router
 from .rag_router import router as rag_router   # NEW
 
 #Build the CoT Chain
-from app.schemas import ReasoningOutput
+from app.schemas import ReasoningOutput, RAGResponse, PromptRequest
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts.chat import ChatPromptTemplate, SystemMessagePromptTemplate, HumanMessagePromptTemplate
 
 from app.utils.response import to_chunks, to_sources
 from fastapi import APIRouter, Body, HTTPException
+
+from app.config_rag import RAGConfig
+from app.schemas import RAGResponse, PromptRequest
+from app.retrieval import retrieve_topk, NoOpReranker
+
+cfg = RAGConfig()
+
 
 # if this is in rag_router.py:
 router = APIRouter()
@@ -180,27 +184,37 @@ Question:
 Answer:
 """)
 
+
 @app.post("/rag-real", response_model=RAGResponse)
-async def rag_real(data: PromptRequest):
-    # Step 1: Embed and search top 3 similar chunks
-    docs = vectorstore.similarity_search(data.prompt, k=3) or []
-    chunks = to_chunks(docs)
-    sources = to_sources(chunks)
-    context = "\n---\n".join(c["content"] for c in chunks)
+async def rag_real(req: PromptRequest):
+    k = req.top_k or 6
+    hits = retrieve_topk(req.prompt, k=k)  # returns List[(score, payload)]
 
-    # Step 2: Inject into prompt
-    formatted_prompt = rag_prompt_template.format(
-        context=context,
-        question=data.prompt
-    )
+    # build context + citations
+    context_lines, citations = [], []
+    for i, (_, p) in enumerate(hits, start=1):
+        context_lines.append(f"[{i}] ({p['doc_id']} · {p['title']})\n{p['text']}")
+        citations.append({
+            "idx": i,
+            "source": p["title"] or p["source_path"] or p["doc_id"],
+            "doc_id": p["doc_id"],
+            "chunk_id": p["chunk_id"],
+            "title": p["title"],
+            "source_path": p["source_path"],
+        })
+    context = "\n\n".join(context_lines)
 
-    # Step 3: Generate answer
-    result = llm_rag.invoke(formatted_prompt)
+    # your existing prompt+LLM flow
+    formatted = rag_prompt_template.format(context=context, question=req.prompt)
+    out = llm_rag.invoke(formatted)
+    answer = getattr(out, "content", None) or str(out)
 
     return {
-        "answer": result.content or "",
-        "sources": sources,
-        "chunks": [c["content"] for c in chunks]
+        "answer": answer,
+        "sources": [c["source"] for c in citations],           # legacy
+        "chunks": [p["text"] for _, p in hits],                 # legacy
+        "citations": citations,
+        "retrieval": {"mode": "merged", "top_k": k, "used_reranker": False, "fusion": None},
     }
 
 

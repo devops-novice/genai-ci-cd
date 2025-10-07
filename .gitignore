@@ -18,3 +18,14 @@ logs/*.jsonl
 __pycache__/
 docs/eval/**/*.json
 
+
+# --- RAG / local-only artifacts (added Oct 2025) ---
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+
+# vector indexes & local manifests
+faiss_index/
+docs/manifest.json

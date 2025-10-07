@@ -2,10 +2,12 @@
 
 import os
 from pathlib import Path
+from typing import Optional, Dict
 from langchain_community.document_loaders import TextLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_openai import OpenAIEmbeddings
+from langchain_community.embeddings import FastEmbedEmbeddings
 
 # ---- Stable chunk IDs --------------------------------------------------------
 def make_chunk_id(filename: str, chunk_index: int) -> str:
@@ -46,25 +48,7 @@ def create_and_save_faiss_index(chunks, index_dir="faiss_index"):
 
 
 # app/embedding_utils.py
-
-from typing import Optional, Dict
-from langchain_community.vectorstores import FAISS
-from langchain_openai import OpenAIEmbeddings
-
 def get_retriever(index_path: str = "faiss_index", k: int = 3, filters: Optional[Dict] = None):
-
-    """
-    Load a retriever backed by FAISS.
-    
-    Parameters:
-    - index_path: path to saved FAISS index
-    - k: number of documents to retrieve
-    - filters: optional metadata filter dict (e.g., {"source": "devops_notes.md"})
-    
-    Returns:
-    - Retriever object supporting get_relevant_documents()
-    """
-
     embedding_model = OpenAIEmbeddings()
     vectorstore = FAISS.load_local(index_path, embedding_model, allow_dangerous_deserialization=True)
 
@@ -74,3 +58,19 @@ def get_retriever(index_path: str = "faiss_index", k: int = 3, filters: Optional
 
     retriever = vectorstore.as_retriever(search_kwargs=search_kwargs)
     return retriever
+
+
+def get_embedder():
+    # Supported by fastembed across versions; lightweight & good quality
+    return FastEmbedEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+
+
+def create_and_save_faiss_index(documents, dest_dir: str = "faiss_index"):
+    emb = get_embedder()
+    try:
+        dim = len(emb.embed_query("probe"))
+        print(f"[ingest] using embedder dim={dim}")
+    except Exception:
+        pass
+    vs = FAISS.from_documents(documents, emb)
+    vs.save_local(dest_dir)
